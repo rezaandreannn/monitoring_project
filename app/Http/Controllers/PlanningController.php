@@ -7,6 +7,17 @@ use Illuminate\Http\Request;
 
 class PlanningController extends Controller
 {
+    private $breadcrumbs, $routeIndex;
+
+    public function __construct()
+    {
+        $this->breadcrumbs = [
+            'Dashboard' => 'dashboard',
+            'Schedule'   => route('schedule.index')
+        ];
+        $this->routeIndex = 'schedule.index';
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,6 +26,13 @@ class PlanningController extends Controller
     public function index()
     {
         //
+        $plannings = Planning::all();
+        return view('planing.index', [
+            'title' => ucwords('planning'),
+            'breadcrumbs' => $this->breadcrumbs,
+            'plannings' => $plannings
+            // 'formations' => $formations,
+        ]);
     }
 
     /**
@@ -25,6 +43,12 @@ class PlanningController extends Controller
     public function create()
     {
         //
+     
+        return view('planing.create', [
+            'title' => ucwords('tambah data planning'),
+            'breadcrumbs' => $this->breadcrumbs
+            
+        ]);
     }
 
     /**
@@ -36,6 +60,22 @@ class PlanningController extends Controller
     public function store(Request $request)
     {
         //
+        $data = $request->validate([
+            'user_id' => ['required', 'max:255'],
+            'title' => ['required'],
+            'description' => ['required', 'max:255'],
+            'category' => ['required'],
+            'start_date' => ['required'],
+            'end_date' => ['required'],
+            'created_by' => ['required'],
+            'updated_by' => ['required'],
+
+        ]);
+
+        Planning::create($data);
+        
+
+        return redirect()->route('planning.index')->with('toast_success', 'Berhasil menambahkan data!');
     }
 
     /**
@@ -58,6 +98,8 @@ class PlanningController extends Controller
     public function edit(Planning $planning)
     {
         //
+        $title = 'Edit Data Planning';
+        return view('planing.edit', compact('planning', 'title'));
     }
 
     /**
@@ -70,6 +112,20 @@ class PlanningController extends Controller
     public function update(Request $request, Planning $planning)
     {
         //
+        $validatedData = $request->validate([
+            'user_id' => ['required', 'max:255'],
+            'title' => ['required'],
+            'description' => ['required', 'max:255'],
+            'category' => ['required'],
+            'start_date' => ['required'],
+            'end_date' => ['required'],
+            'created_by' => ['required'],
+            'updated_by' => ['required'],
+        ]);
+
+        $planning->update($validatedData);
+
+        return redirect()->route('planning.index')->with('toast_success', 'Edit Data Berhasil');
     }
 
     /**
@@ -81,5 +137,8 @@ class PlanningController extends Controller
     public function destroy(Planning $planning)
     {
         //
+        $planning->delete();
+
+        return redirect()->route('planning.index')->with('toast_success', 'Berhasil menghapus data!');
     }
 }

@@ -2,9 +2,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                    <i class="ion ion-plus"> </i> Tambah Data
-                </button>
+                <x-a-link-create href="{{ route('planning.create')}}">Tambah</x-a-link-create>
                 <div class="section-header-breadcrumb">
                     @foreach ($breadcrumbs as $title => $url)
                     <div class="breadcrumb-item"><a href="{{ $url ?? ''}}">{{ $title ?? ''}}</a></div>
@@ -28,29 +26,37 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center">{{ ucwords('No')}}</th>
-                                                <th>{{ ucwords('nama formasi')}}</th>
-                                                <th>{{ ucwords('deskripsi')}}</th>
-                                                <th>{{ ucwords('diperbarui oleh')}}</th>
-                                                <th>{{ ucwords('Terakhir diperbarui')}}</th>
+                                                <th>{{ ucwords('Nama User')}}</th>
+                                                <th>{{ ucwords('Judul Project')}}</th>
+                                                <th>{{ ucwords('Deskripsi')}}</th>
+                                                <th>{{ ucwords('Kategori')}}</th>
+                                                <th>{{ ucwords('Tanggal Mulai')}}</th>
+                                                <th>{{ ucwords('Tanggal Selesai')}}</th>
+                                                <th>{{ ucwords('Update By')}}</th>
+                                                <th>{{ ucwords('Update At')}}</th>
                                                 <th>{{ ucwords('aksi')}}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($formations as $formation)
+                                            @foreach ($plannings as $planning)
                                             <tr>
                                                 <td style="width: 5%">
                                                     {{ $loop->iteration}}
                                                 </td>
-                                                <td style="width: 20%">{{ $formation->name}}</td>
-                                                <td style="width: 30%">{{ $formation->description}}</td>
-                                                <td style="width: 15%">{{ $formation->updated_by}}</td>
+                                                <td style="width: 20%">{{ $planning->user_id}}</td>
+                                                <td style="width: 30%">{{ $planning->title}}</td>
+                                                <td style="width: 15%">{{ $planning->description}}</td>
+                                                <td style="width: 15%">{{ $planning->category}}</td>
+                                                <td style="width: 15%">{{ $planning->start_date}}</td>
+                                                <td style="width: 15%">{{ $planning->end_date}}</td>
+                                                <td style="width: 15%">{{ $planning->updated_by}}</td>
                                                 <td style="width: 15%">
-                                                    {{ date('Y/m/d', strtotime($formation->updated_at))}}</td>
+                                                    {{ date('Y/m/d', strtotime($planning->updated_at))}}</td>
                                                 <td style="width: 25%">
-                                                    <x-a-link-edit-modal param="{{ $formation->id }}">
-                                                    </x-a-link-edit-modal>
+                                                    <x-a-link-edit href="{{ route('planning.edit', $planning->id) }}">
+                                                    </x-a-link-edit>
                                                     <x-button-delete
-                                                        action="{{ route('formation.destroy', $formation->id)}}">
+                                                        action="{{ route('planning.destroy', $planning->id)}}">
                                                     </x-button-delete>
                                                 </td>
                                             </tr>
@@ -67,86 +73,6 @@
     </div>
 
 
-    <!-- Modal Add -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Tambah Data {{ $title ?? ''}}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="{{ route('formation.store')}}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Nama Formasi <i><small class="required-label"></small></i>
-                            </label>
-                            <input type="text" name="name" class="form-control" required="">
-                            <div class="valid-feedback">
-
-                            </div>
-                            <div class="invalid-feedback">
-                                <i>Input nama formasi wajib diisi.</i>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0">
-                            <label>Deskripsi</label>
-                            <textarea class="form-control" name="description"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                        <button type="submit" id="buttonAdd" class="btn btn-primary" disabled>Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Edit -->
-    @foreach ($formations as $formation)
-    <div class="modal fade" id="editModal{{ $formation->id }}" tabindex="-1" aria-labelledby="editModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Data {{ $title ?? ''}}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="{{ route('formation.update', $formation->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Nama Formasi <i><small class="required-label"></small></i>
-                            </label>
-                            <input type="text" name="name" class="form-control" value="{{ $formation->name }}"
-                                required="">
-                            <div class="valid-feedback">
-
-                            </div>
-                            <div class="invalid-feedback">
-                                <i>Input nama formasi wajib diisi.</i>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0">
-                            <label>Deskripsi</label>
-                            <textarea class="form-control" name="description">{{ $formation->description }}</textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                        <button type="submit" id="buttonUpdate" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    @endforeach
 
     {{-- css library --}}
     @push('css-libraries')
